@@ -1,0 +1,14 @@
+Hello {buyer_name},
+
+We are exporters of premium handcrafted Singing Bowls and came across {company_name}
+while researching businesses in {country} that source or distribute wellness/sound
+therapy products.
+
+I've attached our company presentation with our product range, pricing, and
+certifications. We'd love to explore a sourcing partnership if this fits what
+you're looking for.
+
+Happy to send samples on request.
+
+Best regards,
+Export Sales Team

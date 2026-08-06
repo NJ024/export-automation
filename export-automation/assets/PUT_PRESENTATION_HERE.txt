@@ -1,0 +1,10 @@
+Put your company presentation file here, named exactly:
+
+    company_presentation.pdf
+
+(or update PRESENTATION_PATH in .env if you want a different name/location)
+
+This file is attached to every outreach email — the send pipeline will
+refuse to run a live campaign if it's missing (per the spec's error handling:
+"Missing presentation file -> Run halts with a configuration error before
+any sends are attempted").
