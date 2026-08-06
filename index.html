@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXPORT Automation System — API 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1620;
+    --panel:#182233;
+    --panel-2:#1E2A3E;
+    --brass:#C6924D;
+    --brass-dim:#8a6836;
+    --paper:#ECE6D6;
+    --paper-dim:#B9B3A2;
+    --teal:#5C8B84;
+    --rule: rgba(236,230,214,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation:none !important; transition:none !important;} }
+
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:700; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--brass);
+  }
+  a{color:var(--brass);}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(15,22,32,0.88); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:64px;}
+  .brand{font-family:'Fraunces',serif; font-weight:700; font-size:1.05rem; color:var(--paper); text-decoration:none; display:flex; align-items:center; gap:10px;}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--brass);}
+  nav ul{list-style:none; display:flex; gap:28px;}
+  nav ul li{margin-right:28px;}
+  nav ul li:last-child{margin-right:0;}
+  nav a.link{color:var(--paper-dim); text-decoration:none; font-size:0.88rem;}
+  nav a.link:hover{color:var(--brass);}
+  nav .cta{
+    border:1px solid var(--brass); color:var(--brass) !important; padding:7px 16px; border-radius:2px;
+    font-size:0.82rem; text-decoration:none;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:96px 0 80px; position:relative; overflow:hidden; border-bottom:1px solid var(--rule);}
+  .hero .wrap{display:grid; grid-template-columns:1.3fr 0.9fr; gap:56px; align-items:center;}
+  .manifest-no{font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--paper-dim); margin-bottom:22px; letter-spacing:0.04em;}
+  .manifest-no span{color:var(--brass);}
+  .hero h1{font-size:clamp(2.3rem,4.4vw,3.6rem); line-height:1.06; color:var(--paper); margin-bottom:22px;}
+  .hero h1 em{font-style:italic; color:var(--brass); font-weight:600;}
+  .hero p.lede{font-size:1.08rem; color:var(--paper-dim); max-width:46ch; margin-bottom:32px;}
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono',monospace; font-size:0.82rem; letter-spacing:0.03em;
+    padding:13px 22px; border-radius:2px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{background:var(--brass); color:var(--ink); font-weight:500;}
+  .btn-ghost{border:1px solid var(--rule); color:var(--paper);}
+
+  /* customs stamp */
+  .stamp-wrap{display:flex; justify-content:center; align-items:center; position:relative;}
+  .stamp{
+    width:220px; height:220px; border-radius:50%;
+    border:2px solid var(--brass); position:relative;
+    display:flex; align-items:center; justify-content:center;
+    animation:spin 34s linear infinite;
+  }
+  .stamp::before{
+    content:""; position:absolute; inset:10px; border:1px dashed var(--brass-dim); border-radius:50%;
+  }
+  .stamp-core{
+    width:104px; height:104px; border-radius:50%; background:var(--panel-2);
+    border:1px solid var(--rule); display:flex; align-items:center; justify-content:center;
+    text-align:center; animation:spin-rev 34s linear infinite;
+  }
+  .stamp-core span{font-family:'Fraunces',serif; font-weight:700; font-size:0.92rem; color:var(--paper); line-height:1.15;}
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @keyframes spin-rev{ to{ transform:rotate(-360deg); } }
+  .stamp svg text{font-family:'IBM Plex Mono',monospace; font-size:10.3px; letter-spacing:2.5px; fill:var(--brass);}
+
+  /* ---------- SECTION shell ---------- */
+  section{padding:80px 0; border-bottom:1px solid var(--rule);}
+  .section-head{margin-bottom:44px; max-width:60ch;}
+  .section-head h2{font-size:clamp(1.6rem,2.6vw,2.1rem); color:var(--paper); margin-top:8px;}
+
+  /* ---------- PIPELINE ---------- */
+  .route{display:flex; align-items:flex-start; overflow-x:auto; gap:0; padding-bottom:12px;}
+  .port{flex:0 0 168px; text-align:center; position:relative;}
+  .port .node{
+    width:52px; height:52px; margin:0 auto 14px; border-radius:50%;
+    background:var(--panel-2); border:1px solid var(--brass); display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; color:var(--brass); font-size:0.85rem;
+  }
+  .port h3{font-size:0.92rem; color:var(--paper); margin-bottom:6px;}
+  .port p{font-size:0.78rem; color:var(--paper-dim);}
+  .track{flex:1 1 40px; height:1px; background:repeating-linear-gradient(90deg, var(--brass) 0 6px, transparent 6px 12px); margin-top:26px; min-width:24px;}
+
+  /* ---------- FEATURES ---------- */
+  .manifest{border:1px solid var(--rule); border-radius:2px; overflow:hidden;}
+  .manifest-row{
+    display:grid; grid-template-columns:44px 1fr 2fr; gap:18px; align-items:start;
+    padding:20px 22px; border-bottom:1px solid var(--rule);
+  }
+  .manifest-row:last-child{border-bottom:none;}
+  .manifest-row:nth-child(odd){background:var(--panel);}
+  .check{font-family:'IBM Plex Mono',monospace; color:var(--brass); font-size:0.95rem;}
+  .manifest-row h3{font-size:0.98rem; color:var(--paper); font-family:'Inter',sans-serif; font-weight:600;}
+  .manifest-row p{font-size:0.88rem; color:var(--paper-dim);}
+
+  /* ---------- SCREENSHOTS ---------- */
+  .plates{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  .plate{border:1px solid var(--rule); background:var(--panel); padding:12px; border-radius:2px;}
+  .plate img{width:100%; display:block; border:1px solid var(--rule); filter:saturate(0.94); aspect-ratio:16/10; object-fit:cover; background:var(--panel-2);}
+  .plate figcaption{margin-top:10px; font-size:0.8rem; color:var(--paper-dim); font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- DEVIATIONS (customs notes) ---------- */
+  .note{
+    display:grid; grid-template-columns:120px 1fr; gap:24px; padding:24px 0; border-bottom:1px solid var(--rule);
+  }
+  .note:last-child{border-bottom:none;}
+  .note .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--ink); background:var(--brass);
+    padding:4px 8px; border-radius:2px; height:fit-content; text-align:center; letter-spacing:0.05em;
+  }
+  .note h3{font-size:1rem; color:var(--paper); margin-bottom:8px; font-family:'Inter',sans-serif; font-weight:600;}
+  .note p{font-size:0.9rem; color:var(--paper-dim);}
+  .note code{font-family:'IBM Plex Mono',monospace; background:var(--panel-2); padding:1px 6px; border-radius:2px; font-size:0.85em; color:var(--brass);}
+
+  /* ---------- LIMITATIONS (fine print) ---------- */
+  .fineprint{
+    background:var(--panel); border:1px solid var(--rule); border-radius:2px; padding:28px 30px;
+  }
+  .fineprint ul{list-style:none;}
+  .fineprint li{
+    font-family:'IBM Plex Mono',monospace; font-size:0.82rem; color:var(--paper-dim);
+    padding:9px 0; border-bottom:1px dashed var(--rule); display:flex; gap:10px;
+  }
+  .fineprint li:last-child{border-bottom:none;}
+  .fineprint li::before{content:"§"; color:var(--brass);}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:64px 0 48px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;}
+  footer p{font-size:0.85rem; color:var(--paper-dim);}
+  footer .mono{color:var(--paper-dim);}
+
+  @media (max-width:820px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .stamp-wrap{order:-1;}
+    .plates{grid-template-columns:1fr;}
+    .manifest-row{grid-template-columns:32px 1fr; grid-template-areas:"c t" ". d";}
+    .note{grid-template-columns:1fr;}
+  }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="dot"></span> EXPORT / API&nbsp;3</a>
+    <ul>
+      <li><a class="link" href="#pipeline">Pipeline</a></li>
+      <li><a class="link" href="#features">Features</a></li>
+      <li><a class="link" href="#evidence">Evidence</a></li>
+      <li><a class="link" href="#deviations">Deviations</a></li>
+    </ul>
+    <a class="cta" href="https://github.com/NJ024/export-automation" target="_blank" rel="noopener">View repo →</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="manifest-no">MANIFEST <span>NO. API-3</span> · CARGO: SINGING BOWLS · ROUTE: DISCOVERY → OUTREACH</div>
+      <h1>Buyer outreach, <em>automated</em>,<br>from search to send.</h1>
+      <p class="lede">A script-driven pipeline that finds international buyers across five channels, validates and classifies every contact, and dispatches personalized Gmail outreach — with duplicate prevention and full audit logs at every stop.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://github.com/NJ024/export-automation" target="_blank" rel="noopener">Read the source →</a>
+        <a class="btn btn-ghost" href="#evidence">See it run</a>
+      </div>
+    </div>
+    <div class="stamp-wrap">
+      <div class="stamp">
+        <svg width="220" height="220" viewBox="0 0 220 220" style="position:absolute; top:0; left:0;">
+          <defs><path id="circlePath" d="M 110,110 m -86,0 a 86,86 0 1,1 172,0 a 86,86 0 1,1 -172,0" /></defs>
+          <text><textPath href="#circlePath">VALIDATED FOR EXPORT • NO DUPLICATES •</textPath></text>
+        </svg>
+        <div class="stamp-core"><span>API&nbsp;3<br>PIPELINE</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="pipeline">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Shipping route</div>
+      <h2>Six ports of call, one buyer record</h2>
+    </div>
+    <div class="route">
+      <div class="port"><div class="node mono">01</div><h3>Discovery</h3><p>Google, sites, directories, manual leads</p></div>
+      <div class="track"></div>
+      <div class="port"><div class="node mono">02</div><h3>Extraction</h3><p>Raw text → normalized record</p></div>
+      <div class="track"></div>
+      <div class="port"><div class="node mono">03</div><h3>Validation</h3><p>Format + MX record check</p></div>
+      <div class="track"></div>
+      <div class="port"><div class="node mono">04</div><h3>Classification</h3><p>Gemini: business / individual</p></div>
+      <div class="track"></div>
+      <div class="port"><div class="node mono">05</div><h3>Outreach</h3><p>Gmail send + attachment</p></div>
+      <div class="track"></div>
+      <div class="port"><div class="node mono">06</div><h3>Report</h3><p>Console + CSV summary</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Cargo manifest</div>
+      <h2>What's in the crate</h2>
+    </div>
+    <div class="manifest">
+      <div class="manifest-row"><div class="check">✓</div><h3>Buyer Search</h3><p>Google Custom Search, website contact-page scanning, business directories, plus a manual-import path for LinkedIn/Facebook leads.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Data Extraction</h3><p>Normalizes raw results into a consistent schema — name, company, email, website, country, source.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Email Validation</h3><p>Regex format check plus DNS MX-record verification, filtering junk before it reaches the send queue.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>AI Classification</h3><p>Gemini-powered business/individual segmentation, with a free heuristic fallback if no API key is set.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Gmail Outreach</h3><p>SMTP + App Password auth, presentation attachment, auto-reconnect on drop, configurable send delay.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Duplicate Prevention</h3><p>Every send is cross-checked against historical logs — no buyer gets emailed twice.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Reporting</h3><p>Console summary and CSV export: totals, success/failure counts, success rate.</p></div>
+      <div class="manifest-row"><div class="check">✓</div><h3>Web UI</h3><p>A Flask app to run the whole pipeline from a browser — upload, classify, send, report, settings.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="evidence">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Proof of execution</div>
+      <h2>Photographed at the dock</h2>
+    </div>
+    <div class="plates">
+      <figure class="plate">
+        <img src="proof-of-execution/01_cli_pipeline_run.png" alt="Terminal output of a full CLI pipeline run">
+        <figcaption>01 — CLI: search → classify → send → report</figcaption>
+      </figure>
+      <figure class="plate">
+        <img src="proof-of-execution/02_web_dashboard.png" alt="Web dashboard screenshot">
+        <figcaption>02 — Web UI: dashboard</figcaption>
+      </figure>
+      <figure class="plate">
+        <img src="proof-of-execution/03_web_send_page.png" alt="Campaign send page screenshot">
+        <figcaption>03 — Web UI: send campaign</figcaption>
+      </figure>
+      <figure class="plate">
+        <img src="proof-of-execution/04_web_report_page.png" alt="Campaign report page screenshot">
+        <figcaption>04 — Web UI: campaign report</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="deviations">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Customs notes</div>
+      <h2>Where this departs from the original spec</h2>
+    </div>
+    <div >
+      <div class="note">
+        <div class="tag">NOTED</div>
+        <div><h3><code>logging/</code> → <code>activity_logging/</code></h3>
+        <p>The original spec's folder name collides with Python's own built-in <code>logging</code> module — anywhere that library or others internally run <code>import logging</code>, it would silently resolve to this folder instead of the standard library. Renamed to avoid that; responsibilities are unchanged.</p></div>
+      </div>
+      <div class="note">
+        <div class="tag">NOTED</div>
+        <div><h3>LinkedIn &amp; Facebook: no scraping</h3>
+        <p>Both platforms' Terms of Service prohibit automated scraping and actively ban accounts that attempt it. Instead, these adapters read leads a human already researched from a manual CSV — same architecture, without the ban risk.</p></div>
+      </div>
+      <div class="note">
+        <div class="tag">ADDED</div>
+        <div><h3><code>classification/</code> folder</h3>
+        <p>The spec's file tree omits a folder for the AI Email Classification Module described in section 5.4 — added to actually implement what's specified.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="limitations" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Bill of lading — fine print</div>
+      <h2>Known limitations</h2>
+    </div>
+    <div class="fineprint">
+      <ul>
+        <li>Country/company fields are inferred from unstructured text and may need manual correction.</li>
+        <li>No consent tracking, unsubscribe links, or CAN-SPAM/GDPR compliance layer — needed before commercial-scale use.</li>
+        <li>CSV storage doesn't scale to very large lead lists and has no concurrent-access safety.</li>
+        <li>Search-source adapters depend on page structure and are fragile to markup changes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">© API 3 — EXPORT Automation System</p>
+    <a class="cta" href="https://github.com/NJ024/export-automation" target="_blank" rel="noopener">github.com/NJ024/export-automation →</a>
+  </div>
+</footer>
+
+</body>
+</html>
